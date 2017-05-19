@@ -7,6 +7,7 @@
 // @include        *
 // @homepageURL    http://fb.com/grim.reaper.slave
 // @supportURL     http://fb.com/grim.reaper.slave
+// @updateURL      https://github.com/MarkiThePews/Some-Useful-Scripts/raw/master/Auto-Cookie-Login-J2Team-Share-Edition--TM.user.js
 // @author         Đặng Quốc Trung
 // ==/UserScript==
 var webs = ['Linksvip','http://linksvip.net','Porn','http://members2.mofosnetwork.com/access/login/'];
