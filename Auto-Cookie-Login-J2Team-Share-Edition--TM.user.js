@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Multi-Login
 // @namespace      http://fb.com/grim.reaper.slave
-// @version        Pre-release-1.2
+// @version        Pre-release-1.2.1
 // @copyright      2017+ Đặng Quốc Trung (MarkiThePews)
 // @description    Như tên thôi =))
 // @include        *
