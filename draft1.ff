@@ -1,0 +1,113 @@
+// ==UserScript==
+// @name           Save This REVAMPED!
+// @namespace      http://fb.com/grim.reaper.slave
+// @version        3.1.2
+// @copyright      2017+ Đặng Quốc Trung (MarkiThePews)
+// @description    Quick save strings/urls to view/browse it later (like promocodes, coupons, or nsfw(JAV) codes/urls ( ͡° ͜ʖ ͡°))
+// @include        *
+// @include about:blank
+// @homepageURL    http://fb.com/grim.reaper.slave
+// @supportURL     http://fb.com/grim.reaper.slave
+// @author         Đặng Quốc Trung
+// @grant GM_setValue
+// @grant GM_getValue
+// @grant GM_deleteValue
+// @grant GM_setClipboard
+// @grant GM_openInTab
+// ==/UserScript==
+// Các lệnh có thể dùng:
+// XXX = từ khóa
+// ZZZ = thứ tự (id)
+// "delete.XXX" xóa từ khóa đầu tiên mà có từ trùng với những từ sau dấu chấm
+// "deleteid.ZZZ" xóa từ khóa đếm theo thứ tự
+// "deleteall." xóa tất cả từ khóa
+// "copy.ZZZ" copy từ khóa theo thứ tự
+// "goto.ZZZ" mở từ khóa đã chọn trong tab mới, đếm thêm thứ tự
+// "linkify.ZZZ.XXX" chuyển từ khóa đã chọn, đếm theo thứ tự sang thành link với phần hiển thị là XXX, vd: ta có từ khóa "facebook.com" ở thứ tự thứ 3, khi dùng: "linkify.3.FB" (thứ tự thứ 3, phần hiển thị sẽ là "FB") thì khi xem sẽ hiện: [URL]FB, hoặc dùng để thay đổi phần hiển thị của một [URL] đã lưu sẵn, vd: ta có [URL]FB ở vị trí 3, khi dùng "linkify.3.Face" thì [URL]FB sẽ chuyển thành [URL]Face.
+// "whatis.ZZZ" hiển thị đường dẫn đã rút gọn dạng [URL]
+// *****Các lưu ý*****
+// XXX thay vào bằng chữ cái, ZZZ thay vào bằng số.
+// Nếu là đường dẫn, hãy thêm vào "#link " và sau đó là từ khóa sẽ rút gọn, vd khi nhập: "asd.xyz#link nhảm" thì khi xem sẽ hiện ra: "[URL]nhảm", khi truy cập bằng goto hoặc copy bằng  vẫn sẽ là
+var displaydata = '';
+var i;
+var substring;
+var data;
+var pushed=0;
+var action = "";
+var callurl = "http://saved.ml/call.php?k=";
+window.onkeypress = function(event) {
+    if (event.keyCode == 2) {
+        promptit();
+    }
+};
+GM_deleteValue(data);
+function promptit() {
+    data = JSON.parse(GM_getValue('data', '[\"!!!KHÔNG CÓ DỮ LIỆU\"]'));
+    if (data[0]) if (data[0].includes("KHÔNG CÓ DỮ LIỆU")) {data.splice(0, 1); savedata();}
+    displaydata = "";
+    for (i = 0; i < data.length; i++) {
+        if (data[i].includes("#link ")) {if (!/^(f|ht)tps?:\/\//i.test(data[i])) {data[i] = "http://" + data[i];} displaydata += i+1 +") "+'[URL]' + data[i].substr(data[i].indexOf("#link ") + 6) + ',\n';}
+        else displaydata += i+1 +") "+data[i] + ',\n';
+    }
+    if (data.length === 0) displaydata = "!!!KHÔNG CÓ DỮ LIỆU..";
+    action = prompt('Các từ khóa đã lưu: \n' + displaydata.slice(0, -2) + '\n\n Nhập từ khóa bất kỳ vào khung dưới để lưu?');
+    if (action === null || action === "") {
+        console.log('null or blank');
+    } else {
+        switch(true) {
+            case action.includes('delete.'):
+                aft = action.substr(action.indexOf('.') + 1);
+                for (i = 0; i < data.length; i++) {
+                if (data[i].includes(aft)) {
+                    data.splice(i, 1);
+                    savedata();}}
+                break;
+            case action.includes('deleteid.'):
+                aft = action.substr(action.indexOf('.') + 1);
+                data.splice(aft - 1, 1);
+                savedata();
+                break;
+            case action.includes('deleteall.'):
+                GM_deleteValue('data');
+                new Image().src = callurl+'Không có dữ liệu';
+                break;
+            case action.includes('copy.'):
+                aft = action.substr(action.indexOf('.') + 1);
+                GM_setClipboard(data[aft - 1]);
+                break;
+            case action.includes('goto.'):
+                aft = action.substr(action.indexOf('.') + 1);
+                    if (!data[aft - 1].includes("#link")) {
+                        istrue = confirm('Từ khóa theo thứ tự bạn vừa chọn không có tag #link, có thể không phải là đường dẫn, bạn có muốn tiếp tục?');
+                        if (!istrue) return;}
+                    if (data[aft - 1].includes("http")) GM_openInTab(data[aft - 1], false);
+                    else GM_openInTab('http://' + data[aft - 1], false);
+                break;
+            case action.includes('linkify.'):
+                id = action.substr(action.indexOf('.') + 1);
+                    bef = id.substr(0, id.indexOf('.'));
+                    aft = id.substr(id.indexOf('.') + 1);
+                    if (id.includes("#link ")) {temp = data[bef - 1]; temp = temp.substr(0, temp.indexOf('#link')); data[bef - 1] = temp + "#link " + aft; savedata();}
+                    else {data[bef - 1] = data[bef - 1] + "#link " + aft; savedata();}
+                break;
+            case action.includes('whatis.'):
+                aft = action.substr(action.indexOf('.') + 1); alert(data[aft -1]);
+                break;
+            default:
+                data.push(action); savedata(); pushed=1;
+}}}
+function savedata() {
+    len = data.length - 1;
+    if (pushed==1) {if (data[len].includes("#link ")) {if (!/^(f|ht)tps?:\/\//i.test(data[len])) {data[len] = "http://" + data[len];}}}
+    GM_setValue('data', JSON.stringify(data));
+    new Image().src = callurl+keys();
+}
+function keys() {
+    displaydata = '';
+    for (i = 0; i < data.length; i++) {
+        if (data[i].includes("#link ")) displaydata += "<a href='" + data[i].substr(0, data[i].indexOf('#link ')) + "'>"+ data[i].substr(data[i].indexOf('#link ') + 6) + "</a>,<br>";
+        else if (data[i].includes("#bt")) displaydata += "<input class='nort bt' type='text' readonly='readonly' value='" + data[i].substr(0, data[i].indexOf('#bt')).replace(/'/g, "%26apos%3B") + "'>,<br>";
+        else if (data[i].includes("#bd")) displaydata += "<input class='nort bd' type='text' readonly='readonly' value='" + data[i].substr(0, data[i].indexOf('#bd')).replace(/'/g, "%26apos%3B") + "'>,<br>";
+        else displaydata += '<input class="nort" type="text" readonly="readonly" value="' + data[i].replace(/"/g, "%26quot%3B") + '">,<br>';
+    }
+    return displaydata.slice(0, -5);}
