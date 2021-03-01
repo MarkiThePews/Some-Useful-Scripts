@@ -1,0 +1,112 @@
+// ==UserScript==
+// @name           Multi-Login
+// @namespace      http://fb.com/grim.reaper.slave
+// @version        Pre-release-1.2.1
+// @copyright      2017+ Đặng Quốc Trung (MarkiThePews)
+// @description    Như tên thôi =))
+// @include        *
+// @homepageURL    http://fb.com/grim.reaper.slave
+// @supportURL     http://fb.com/grim.reaper.slave
+// @updateURL      https://github.com/NamesMT/BLANK
+// @author         Đặng Quốc Trung
+// ==/UserScript==
+//
+var webs = ['Linksvip', 'http://linksvip.net', 'Porn', 'http://members2.mofosnetwork.com/access/login/'];
+
+function writeCookie(input) {
+    var cookies = input;
+    var cArray = cookies.split(";");
+    for (i = 0; i < cArray.length; i++) {
+        document.cookie = cArray[i] + "; path=/"
+    }
+}
+
+function getCookie(name) {
+    var re = new RegExp(name + "=([^;]+)");
+    var value = re.exec(document.cookie);
+    return (value !== null) ? unescape(value[1]) : null
+}
+
+function domain(whitelisted) {
+    if (whitelisted) return location.href;
+    else return location.hostname.replace('www.', '')
+}
+
+function listed() {
+    var temp = "";
+    for (i = 0; i < webs.length; i++) {
+        temp += '=>' + webs[i] + '\n';
+        i++
+    }
+    return temp
+}
+if (domain() == 'blogtruyen.com') {
+    if (getCookie('BT_ID') != '0NEclRFCvEnklVfWpcPr') {
+        writeCookie('BT_ID=0NEclRFCvEnklVfWpcPr');
+        location.reload()
+    } else document.getElementsByClassName('top-submenu')[0].getElementsByTagName("li")[4].remove()
+}
+if (domain() == 'facebook.com') {
+    if (getCookie('xs') != '19:r7F8S7qGTh6XHg:2:1495161571:9674') {
+        writeCookie('act=1495161515545%2F2;c_user=100009934877771;datr=yVoeWYAVwTrcimQ6qwSNuls1;fr=0GHFTaZ6WDDYVRbQP.AWUXD5oQXv9yZUjxPb8_nwi0E9E.BZHlrJ.n8.Fke.0.0.BZHlsH.AWXZb2bl;presence=EDvF3EtimeF1495161575EuserFA21B09934877771A2EstateFDutF1495161575443CEchFDp_5f1B09934877771F10CC;sb=4loeWa2GnRUefJo-LxNiesgF;xs=19%3Ar7F8S7qGTh6XHg%3A2%3A1495161571%3A9674;');
+        location.reload()
+    }
+}
+if (domain() == '192.168.100.1') {
+    if (document.getElementById("txt_Username") !== null) document.getElementById("txt_Username").value = "root";
+    if (document.getElementById("txt_Username") !== null) document.getElementById("txt_Password").value = "Dangthanhlam@";
+    var mainDiv = document.getElementById('headerTab'),
+        childDiv = mainDiv.getElementsByTagName('ul')[0],
+        requiredDiv = childDiv.getElementsByTagName('li')[5],
+        lastc = requiredDiv.getElementsByTagName('div')[1];
+    lastc.innerHTML = "Bấm vào đây"
+}
+if (domain() == 'linksvip.net') {
+    if (getCookie('user') != 'linksvip@shareaccvip.com') {
+        writeCookie('user=linksvip%40shareaccvip.com;pass=f2624b8019e511e8dedabd065c3f5dba');
+        location.reload()
+    } else document.getElementsByClassName('portlet-content')[2].getElementsByTagName('div')[4].remove()
+}
+//if (domain('yes') == 'http://members2.mofosnetwork.com/access/login/') {
+//    document.getElementById('username').value = 'tommym3589';
+//    document.getElementById('username').style.display = 'none';
+//    document.getElementsByClassName('input_label_username')[0].style.display = 'none';
+//    document.getElementById('password').value = 'beky86er';
+//    document.getElementById('password').style.display = 'none';
+//    document.getElementsByClassName('input-label-password')[0].style.display = 'none';
+//    var check = document.getElementById('recaptcha_widget');
+//    if (check) alert('Phát hiện captcha, nhập captcha rồi ấn Login.');
+//    else document.getElementsByClassName('btn-blue')[0].click()
+//}
+window.onkeydown = function (event) {
+    if (event.keyCode == 71 && event.shiftKey) {
+        promptit()
+    }
+};
+
+function promptit() {
+    var redirectbox = prompt("Hiện đang có:\n" + listed() + "Điền vào nơi muốn chuyển hướng");
+    switch (redirectbox) {
+    case webs[0]:
+        location.replace(webs[1]);
+        break;
+    case webs[2]:
+        location.replace(webs[3]);
+        break;
+    case webs[4]:
+        location.replace(webs[5]);
+        break;
+    case webs[6]:
+        location.replace(webs[7]);
+        break;
+    case webs[8]:
+        location.replace(webs[9]);
+        break;
+    case webs[10]:
+        location.replace(webs[11]);
+        break;
+    default:
+        alert('Không tìm thấy....');
+        break
+    }
+}
